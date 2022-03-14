@@ -61,9 +61,14 @@ class EmployeeAttendanceController extends Controller
      */
     public function store(AttendanceImportRequest $request): RedirectResponse
     {
-        Excel::import(new EmployeeAttendanceImport, $request->file('file'));
-        Toastr::success('Data Import Successfully', 'Imported');
-        return redirect()->route('attendances.index');
+        try {
+            Excel::import(new EmployeeAttendanceImport, $request->file('file'));
+            Toastr::success('Data Import Successfully', 'Imported');
+            return redirect()->route('attendances.index');
+        } catch (\Exception $exception) {
+            Toastr::error($exception->getMessage(), 'Error');
+            return redirect()->back();
+        }
     }
 
 
